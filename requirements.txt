@@ -2,3 +2,4 @@ dj-database-url==0.3.0
 Django==1.7.4
 psycopg2==2.5.4
 waitress==0.8.9
+whitenoise==1.0.6
