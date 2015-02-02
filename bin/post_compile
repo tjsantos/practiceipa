@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# this runs before foreman starts server
+
+# ensure debug is false
+set -eo pipefail
+python -c 'import practiceipa.settings as s; assert s.DEBUG == False'
+
