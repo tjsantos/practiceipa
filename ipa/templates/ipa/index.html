@@ -1,12 +1,5 @@
-{% load static from staticfiles %}
-<!DOCTYPE html>
-<html lang='en'>
-<head>
-  <title>Practice IPA</title>
-</head>
+{% extends "ipa/base.html" %}
 
-<body>
-<h1>Practice IPA (in development)</h1>
+{% block num_entries %}
 <h2>Entries with IPA: {{ num_entries }}</h2>
-</body>
-</html>
+{% endblock %}

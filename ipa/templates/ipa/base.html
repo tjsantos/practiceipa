@@ -1,0 +1,19 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <title>Practice IPA</title>
+</head>
+
+<body>
+
+<h1>Practice IPA (in development)</h1>
+{% block num_entries %}{% endblock %}
+<h3>(search bar)</h3>
+
+<div id="content">
+{% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

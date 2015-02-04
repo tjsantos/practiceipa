@@ -1,0 +1,10 @@
+{% extends "ipa/base.html" %}
+
+{% block content %}
+<h3>{{ entry.entry }}</h3>
+<ul>
+{% for pronunciation in entry.pronunciation_set.all %}
+  <li>/{{ pronunciation.ipa }}/</li>
+{% endfor %}
+</ul>
+{% endblock %}
