@@ -3,6 +3,11 @@
 {% block content %}
 <h3>{{ entry.entry }}</h3>
 <ul>
+{% for audio in entry.audio_set.all %}
+  <li>{{ audio.embed_html|safe }}</li>
+{% endfor %}
+</ul>
+<ul>
 {% for ipa in entry.ipa_set.all %}
   <li>/{{ ipa.ipa }}/</li>
 {% endfor %}

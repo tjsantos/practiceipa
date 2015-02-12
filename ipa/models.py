@@ -23,4 +23,8 @@ class Audio(models.Model):
     entry = models.ForeignKey(Entry)
 
     def embed_html(self):
-        return self.filename
+        return (
+            '<iframe src="//commons.wikimedia.org/wiki/File:' +
+            self.filename +
+            '?embedplayer=yes" width="175" height="20" allowFullScreen></iframe>'
+        )

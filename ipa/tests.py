@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from ipa.models import Entry, Ipa
+from ipa.models import Entry, Ipa, Audio
 
 # Create your tests here.
 
@@ -18,3 +18,15 @@ class EntryViewTest(TestCase):
         self.assertContains(response, word)
         for ipa in ipas:
             self.assertContains(response, ipa)
+
+    def test_can_see_audio_info(self):
+        word = 'test'
+        lang = 'en'
+        audio_filename = 'boom.ogg'
+        entry = Entry.objects.create(entry=word)
+        audio = Audio.objects.create(filename=audio_filename, entry=entry)
+
+        response = self.client.get(reverse('detail', args=(lang, word)))
+        self.assertContains(response, audio_filename)
+        # ensure embed isn't escaped
+        self.assertNotContains(response, 'src=&quot;')
