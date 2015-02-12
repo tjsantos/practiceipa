@@ -1,12 +1,15 @@
 from django.contrib import admin
-from ipa.models import Entry, Pronunciation
+from ipa.models import Entry, Ipa, Audio
 
 # Register your models here.
 
-class PronunciationInline(admin.StackedInline):
-    model = Pronunciation
+class IpaInline(admin.TabularInline):
+    model = Ipa
+
+class AudioInline(admin.TabularInline):
+    model = Audio
 
 class EntryAdmin(admin.ModelAdmin):
-    inlines = [PronunciationInline]
+    inlines = [IpaInline, AudioInline]
 
 admin.site.register(Entry, EntryAdmin)

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from ipa.models import Entry, Pronunciation
+from ipa.models import Entry, Ipa
 
 # Create your tests here.
 
@@ -12,7 +12,7 @@ class EntryViewTest(TestCase):
         ipas = ['ipa1', 'ipa2']
         entry = Entry.objects.create(entry=word)
         for ipa in ipas:
-            Pronunciation.objects.create(ipa=ipa, entry=entry)
+            Ipa.objects.create(ipa=ipa, entry=entry)
 
         response = self.client.get(reverse('detail', args=(lang, word)))
         self.assertContains(response, word)

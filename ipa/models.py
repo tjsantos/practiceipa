@@ -5,6 +5,22 @@ from django.db import models
 class Entry(models.Model):
     entry = models.CharField(max_length=200, db_index=True)
 
-class Pronunciation(models.Model):
+ACCENTS = (
+    ('US', 'American'),
+    ('UK', 'British'),
+    ('OT', 'Other'),
+    ('', 'Unspecified'),
+)
+
+class Ipa(models.Model):
+    ipa = models.CharField(max_length=200, db_index=True)
+    accent = models.CharField(max_length=2, choices=ACCENTS, default='', blank=True)
     entry = models.ForeignKey(Entry)
-    ipa = models.CharField(max_length=200)
+
+class Audio(models.Model):
+    filename = models.CharField(max_length=100)
+    accent = models.CharField(max_length=2, choices=ACCENTS, default='', blank=True)
+    entry = models.ForeignKey(Entry)
+
+    def embed_html(self):
+        return self.filename
