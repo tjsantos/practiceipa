@@ -1,21 +1,21 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from ipa.models import Entry, Ipa, Audio
+from ipa.models import Word, Ipa, Audio
 
 # Create your tests here.
 
-class EntryViewTest(TestCase):
+class WordViewTest(TestCase):
 
     def test_can_see_pronunciation_details(self):
         word = 'test'
         lang = 'en'
         ipas = ['ipa1', 'ipa2']
-        entry = Entry.objects.create(entry=word)
+        word = Word.objects.create(word=word)
         for ipa in ipas:
-            Ipa.objects.create(ipa=ipa, entry=entry)
+            Ipa.objects.create(ipa=ipa, word=word)
 
-        response = self.client.get(reverse('detail', args=(lang, word)))
-        self.assertContains(response, word)
+        response = self.client.get(reverse('detail', args=(lang, word.word)))
+        self.assertContains(response, word.word)
         for ipa in ipas:
             self.assertContains(response, ipa)
 
@@ -23,10 +23,10 @@ class EntryViewTest(TestCase):
         word = 'test'
         lang = 'en'
         audio_filename = 'boom.ogg'
-        entry = Entry.objects.create(entry=word)
-        audio = Audio.objects.create(filename=audio_filename, entry=entry)
+        word = Word.objects.create(word=word)
+        audio = Audio.objects.create(filename=audio_filename, word=word)
 
-        response = self.client.get(reverse('detail', args=(lang, word)))
+        response = self.client.get(reverse('detail', args=(lang, word.word)))
         self.assertContains(response, audio_filename)
         # ensure embed isn't escaped
         self.assertNotContains(response, 'src=&quot;')
