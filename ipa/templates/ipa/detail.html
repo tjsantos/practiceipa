@@ -4,7 +4,9 @@
 <h3>{{ word.word }}</h3>
 <ul>
 {% for audio in word.audio_set.all %}
-  <li>{{ audio.embed_html|safe }}</li>
+<li><audio src={{ audio.audiofile.url }} controls>
+    Your browser does not support the <code>audio</code> element.
+</audio></li>
 {% endfor %}
 </ul>
 <ul>

@@ -18,13 +18,6 @@ class Ipa(models.Model):
     word = models.ForeignKey(Word)
 
 class Audio(models.Model):
-    filename = models.CharField(max_length=100)
+    audiofile = models.FileField()
     accent = models.CharField(max_length=2, choices=ACCENTS, default='', blank=True)
     word = models.ForeignKey(Word)
-
-    def embed_html(self):
-        return (
-            '<iframe src="//commons.wikimedia.org/wiki/File:' +
-            self.filename +
-            '?embedplayer=yes" width="175" height="20" allowFullScreen></iframe>'
-        )

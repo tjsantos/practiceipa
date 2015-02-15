@@ -1,4 +1,5 @@
-from django.conf.urls import patterns, include, url
+from django.conf import settings
+from django.conf.urls import patterns, include, url, static
 from django.contrib import admin
 
 urlpatterns = patterns('',
@@ -10,3 +11,6 @@ urlpatterns = patterns('',
 
     url(r'^', include('ipa.urls')),
 )
+# serve media files locally for development
+# only works if DEBUG==True and MEDIA_URL is local (e.g. /media/)
+urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
