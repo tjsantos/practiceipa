@@ -21,3 +21,8 @@ class Audio(models.Model):
     audiofile = models.FileField()
     accent = models.CharField(max_length=2, choices=ACCENTS, default='', blank=True)
     word = models.ForeignKey(Word)
+
+    def delete(self, *args, **kwargs):
+        '''Delete associated files'''
+        self.audiofile.delete()
+        super().delete(*args, **kwargs)

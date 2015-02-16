@@ -123,12 +123,9 @@ if not DEBUG:
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+    AWS_LOCATION = 'media' # files are in 'media' folder in s3 bucket
     AWS_QUERYSTRING_AUTH = False
-
-    from storages.backends.s3boto import S3BotoStorage
-    class MediaStorage(S3BotoStorage):
-        location = 'media' # files are in 'media' folder in s3 bucket
-    DEFAULT_FILE_STORAGE = 'practiceipa.settings.MediaStorage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 else:
     # files are local
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
