@@ -9,7 +9,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^', include('ipa.urls')),
+    url(r'^', include('ipa.urls', namespace='ipa')),
 )
 # serve media files locally for development
 # only works if DEBUG==True and MEDIA_URL is local (e.g. /media/)

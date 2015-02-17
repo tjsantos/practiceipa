@@ -1,4 +1,4 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.conf import global_settings
 from django.core.urlresolvers import reverse
 from django.core.files.base import ContentFile
@@ -6,12 +6,17 @@ from ipa.models import Word, Ipa, Audio
 
 from tempfile import mkdtemp
 from shutil import rmtree
-from unittest.mock import MagicMock
 import os
 
 # Create your tests here.
 
 class WordViewTest(TestCase):
+
+    def test_raises_404_on_invalid_lang_parameter(self):
+        self.skipTest('TODO')
+
+    def test_links_to_wiktionary_if_word_not_found(self):
+        self.skipTest('TODO')
 
     def test_can_see_pronunciation_details(self):
         word = 'test'
@@ -21,10 +26,12 @@ class WordViewTest(TestCase):
         for ipa in ipas:
             Ipa.objects.create(ipa=ipa, word=word)
 
-        response = self.client.get(reverse('detail', args=(lang, word.word)))
+        response = self.client.get(reverse('ipa:detail', args=(lang, word.word)))
         self.assertContains(response, word.word)
         for ipa in ipas:
             self.assertContains(response, ipa)
+
+        # assert links to wiktionary
 
     #def test_can_see_audio_info(self):
     #    word = 'test'
@@ -60,3 +67,12 @@ class AudioModelTest(TestCase):
             rmtree(folder)
             # TODO: `with` block for temp folders?
 
+class SearchTest(TestCase):
+
+    def test_search_raises_404_if_missing_get_parameter(self):
+        response = self.client.get(reverse('ipa:search'), {'search': 'asdf'})
+        self.assertEqual(404, response.status_code)
+
+    def test_search_redirects_to_detail_given_parameters(self):
+        response = self.client.get(reverse('ipa:search'), {'search': 'asdf', 'lang':'xqz'})
+        self.assertRedirects(response, reverse('ipa:detail', args=('xqz', 'asdf')))

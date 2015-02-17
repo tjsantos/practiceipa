@@ -9,7 +9,7 @@
 
 <h1>Practice IPA (in development)</h1>
 {% block num_entries %}{% endblock %}
-<form action="{% url 'search' %}" method="get">
+<form action="{% url 'ipa:search' %}" method="get">
   <input id="search" type="text" name="search">
   <select name="lang" style="display: none">
     <option value="en">English</option>

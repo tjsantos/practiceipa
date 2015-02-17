@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from ipa.models import Word
 
@@ -20,8 +20,7 @@ def detail(request, lang, search):
 
 def search(request):
     try:
-        redirect_url = reverse('detail', args=(request.GET['lang'],
-                                               request.GET['search']))
+        redirect_url = reverse('ipa:detail', args=(request.GET['lang'], request.GET['search']))
         return HttpResponseRedirect(redirect_url)
     except KeyError:
-        return HttpResponseRedirect(reverse('index'))
+        raise Http404('Missing GET parameter(s)')

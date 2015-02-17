@@ -3,7 +3,9 @@ from django.db import models
 # Create your models here.
 
 class Word(models.Model):
+    LANGUAGES = (('en', 'English'),)
     word = models.CharField(max_length=200, db_index=True)
+
 
 ACCENTS = (
     ('US', 'American'),
