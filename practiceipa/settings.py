@@ -89,8 +89,8 @@ LOGGING = {
     'formatters': {
         'heroku': {
             'format': (
-                '[%(levelname)s] pathname=%(pathname)s '
-                'lineno=%(lineno)s funcname=%(funcName)s %(message)s'
+                '[%(levelname)s] path:%(pathname)s line:%(lineno)s '
+                'function:%(funcName)s message:%(message)s'
             ),
         },
     },
@@ -118,15 +118,16 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # Media files
 
-if not DEBUG:
-    # files are on s3
-    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-    AWS_LOCATION = 'media' # files are in 'media' folder in s3 bucket
-    AWS_QUERYSTRING_AUTH = False
+# s3 config
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_LOCATION = 'media' # files are in 'media' folder in s3 bucket
+AWS_QUERYSTRING_AUTH = False
+if AWS_SECRET_ACCESS_KEY:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-else:
-    # files are local
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    MEDIA_URL = '/media/'
+
+# only used if default file storage is local
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+

@@ -41,10 +41,11 @@ class WordViewTest(TestCase):
 class AudioModelTest(TestCase):
 
     # don't connect to external file storage
-    @override_settings(DEFAULT_FILE_STORAGE=global_settings.DEFAULT_FILE_STORAGE)
     def test_audio_file_deleted_with_object(self):
         a = Audio()
+        # make sure file storage is default local and not external
         self.assertIn(global_settings.DEFAULT_FILE_STORAGE, str(a.audiofile.storage))
+
         word = Word.objects.create(word='abc')
         a.word = word
         try:
@@ -57,4 +58,5 @@ class AudioModelTest(TestCase):
                 self.assertEqual(0, len(os.listdir(folder)))
         finally:
             rmtree(folder)
+            # TODO: `with` block for temp folders?
 

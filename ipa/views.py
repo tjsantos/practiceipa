@@ -3,7 +3,6 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from ipa.models import Word
 
-# Create your views here.
 def index(request):
     num_entries = Word.objects.count()
     context = {'num_entries': num_entries}
