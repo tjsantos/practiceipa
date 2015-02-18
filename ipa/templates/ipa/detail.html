@@ -1,17 +1,21 @@
 {% extends "ipa/base.html" %}
 
 {% block content %}
-<h3>{{ word.word }}</h3>
-<ul>
-{% for audio in word.audio_set.all %}
-<li><audio controls src={{ audio.audiofile.url }}>
-    Your browser does not support the <code>audio</code> element.
-</audio></li>
-{% endfor %}
-</ul>
-<ul>
-{% for ipa in word.ipa_set.all %}
-  <li>/{{ ipa.ipa }}/</li>
-{% endfor %}
-</ul>
+{% if word.id %}
+  <h3>{{ word.word }}</h3>
+  <ul>
+  {% for audio in word.audio_set.all %}
+  <li><audio controls src={{ audio.audiofile.url }}>
+      Your browser does not support the <code>audio</code> element.
+  </audio></li>
+  {% endfor %}
+  </ul>
+  <ul>
+  {% for ipa in word.ipa_set.all %}
+    <li>/{{ ipa.ipa }}/</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <h3>{{ word.word }} was not found.</h3>
+{% endif %}
 {% endblock %}

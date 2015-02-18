@@ -9,14 +9,13 @@ def index(request):
     return render(request, 'ipa/index.html', context)
 
 def detail(request, lang, search):
-    # (check language ?)
+    if lang not in Word.LANG_CODES:
+        raise Http404('Language code "{}" not found'.format(lang))
     try:
-        word = Word.objects.get(word=search)
-        template = 'ipa/detail.html'
+        word = Word.objects.prefetch_related('ipa_set', 'audio_set').get(word=search)
     except Word.DoesNotExist:
         word = Word(word=search)
-        template = 'ipa/not_found.html'
-    return render(request, template, {'word': word})
+    return render(request, 'ipa/detail.html', {'word': word})
 
 def search(request):
     try:

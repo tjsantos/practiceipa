@@ -13,10 +13,22 @@ import os
 class WordViewTest(TestCase):
 
     def test_raises_404_on_invalid_lang_parameter(self):
-        self.skipTest('TODO')
+        lang = 'alien'
+        self.assertNotIn(lang, Word.LANG_CODES)
+        response = self.client.get(reverse('ipa:detail', args=(lang, 'apple')))
+        self.assertEqual(404, response.status_code)
 
     def test_links_to_wiktionary_if_word_not_found(self):
         self.skipTest('TODO')
+
+    def test_appropriate_message_when_word_not_found(self):
+        lang = 'en'
+        word = 'asdf'
+        self.assertIn(lang, Word.LANG_CODES)
+        with self.assertRaises(Word.DoesNotExist):
+            Word.objects.get(word=word)
+        response = self.client.get(reverse('ipa:detail', args=(lang, word)))
+        self.assertContains(response, 'not found')
 
     def test_can_see_pronunciation_details(self):
         word = 'test'
@@ -75,4 +87,5 @@ class SearchTest(TestCase):
 
     def test_search_redirects_to_detail_given_parameters(self):
         response = self.client.get(reverse('ipa:search'), {'search': 'asdf', 'lang':'xqz'})
-        self.assertRedirects(response, reverse('ipa:detail', args=('xqz', 'asdf')))
+        self.assertRedirects(response, reverse('ipa:detail', args=('xqz', 'asdf')),
+                             fetch_redirect_response=False)

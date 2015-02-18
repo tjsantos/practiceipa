@@ -3,7 +3,8 @@ from django.db import models
 # Create your models here.
 
 class Word(models.Model):
-    LANGUAGES = (('en', 'English'),)
+    LANGUAGE_CHOICES = (('en', 'English'),)
+    LANG_CODES = set(code for (code, language) in LANGUAGE_CHOICES)
     word = models.CharField(max_length=200, db_index=True)
 
 
