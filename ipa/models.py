@@ -6,6 +6,10 @@ class Word(models.Model):
     LANGUAGE_CHOICES = (('en', 'English'),)
     LANG_CODES = set(code for (code, language) in LANGUAGE_CHOICES)
     word = models.CharField(max_length=200, db_index=True)
+    lang = 'en'
+
+    def wiktionary_url(self):
+        return '//{}.wiktionary.org/wiki/{}'.format(self.lang, self.word)
 
 
 ACCENTS = (

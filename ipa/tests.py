@@ -18,9 +18,6 @@ class WordViewTest(TestCase):
         response = self.client.get(reverse('ipa:detail', args=(lang, 'apple')))
         self.assertEqual(404, response.status_code)
 
-    def test_links_to_wiktionary_if_word_not_found(self):
-        self.skipTest('TODO')
-
     def test_appropriate_message_when_word_not_found(self):
         lang = 'en'
         word = 'asdf'
@@ -43,7 +40,7 @@ class WordViewTest(TestCase):
         for ipa in ipas:
             self.assertContains(response, ipa)
 
-        # assert links to wiktionary
+        self.assertContains(response, 'en.wiktionary.org/wiki/test')
 
     #def test_can_see_audio_info(self):
     #    word = 'test'

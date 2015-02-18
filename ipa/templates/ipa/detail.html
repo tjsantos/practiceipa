@@ -1,6 +1,7 @@
 {% extends "ipa/base.html" %}
 
 {% block content %}
+
 {% if word.id %}
   <h3>{{ word.word }}</h3>
   <ul>
@@ -16,6 +17,11 @@
   {% endfor %}
   </ul>
 {% else %}
-  <h3>{{ word.word }} was not found.</h3>
+  <h3>Pronunciation info for {{ word.word }} was not found.</h3>
 {% endif %}
+
+<a href="{{word.wiktionary_url}}">
+  See this word on wiktionary
+</a>
+
 {% endblock %}
