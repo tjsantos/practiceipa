@@ -1,6 +1,5 @@
 from django.db import models
-
-# Create your models here.
+from django.core.urlresolvers import reverse
 
 class Word(models.Model):
     LANGUAGE_CHOICES = (('en', 'English'),)
@@ -10,6 +9,9 @@ class Word(models.Model):
 
     def wiktionary_url(self):
         return '//{}.wiktionary.org/wiki/{}'.format(self.lang, self.word)
+
+    def get_absolute_url(self):
+        return reverse('ipa:detail', kwargs={'search': self.word, 'lang': self.lang})
 
 
 ACCENTS = (

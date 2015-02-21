@@ -1,3 +1,11 @@
 from django.contrib import admin
+from ipa.models import Word
+from practice.models import Wordlist
 
-# Register your models here.
+class WordInline(admin.TabularInline):
+    model = Word
+
+class WordlistAdmin(admin.ModelAdmin):
+    inlines = [WordInline]
+
+#admin.site.register(Wordlist, WordlistAdmin)

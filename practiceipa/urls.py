@@ -9,6 +9,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^wordlists/', include('practice.urls', namespace='practice')),
     url(r'^', include('ipa.urls', namespace='ipa')),
 )
 # serve media files locally for development

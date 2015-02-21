@@ -1,0 +1,13 @@
+{% extends "ipa/base.html" %}
+
+{% block content %}
+
+<h3>{{ wordlist.name }}</h3>
+
+{% for word in wordlist.words.all %}
+<ul>
+  <li><a href="{{ word.get_absolute_url }}">{{ word.word }}</a></li>
+</ul>
+{% endfor %}
+
+{% endblock %}
