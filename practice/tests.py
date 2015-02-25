@@ -1,6 +1,7 @@
 from django.test import TestCase
 from practice.models import Wordlist
 from django.core.urlresolvers import reverse, resolve
+from django.utils.text import slugify
 
 class WordlistViewTest(TestCase):
 
@@ -27,3 +28,16 @@ class WordlistViewTest(TestCase):
         response = self.client.get(wordlist.get_absolute_url())
         for word in words:
             self.assertContains(response, word)
+
+class WordlistModelTest(TestCase):
+
+    def test_slugify_on_save(self):
+        name = 'test i get slugified'
+        wordlist = Wordlist.objects.create(name=name)
+        self.assertEqual(slugify(name), wordlist.slug)
+        # slug should be valid on name change
+        # slug should truncate properly to max_length
+        max_slug_length = Wordlist._meta.get_field('slug').max_length
+        wordlist.name = 'a' * (1 + max_slug_length)
+        wordlist.save()
+        self.assertEqual('a' * max_slug_length, wordlist.slug)
