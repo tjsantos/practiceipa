@@ -132,3 +132,4 @@ if AWS_SECRET_ACCESS_KEY:
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+SESSION_SAVE_EVERY_REQUEST = True

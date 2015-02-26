@@ -4,6 +4,10 @@
 
 <h3>{{ wordlist.name }}</h3>
 
+<a href="{% url 'practice:quiz' wordlist_id=wordlist.id wordlist_slug=wordlist.slug %}">
+  Quiz Yourself
+</a>
+
 {% for word in wordlist.words.all %}
 <ul>
   <li><a href="{{ word.get_absolute_url }}">{{ word.word }}</a></li>

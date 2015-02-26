@@ -1,0 +1,23 @@
+{% if word.id %}
+  <h3>{{ word.word }}</h3>
+  <ul>
+  {% for audio in word.audio_set.all %}
+  <li><audio controls src={{ audio.audiofile.url }}>
+      Your browser does not support the <code>audio</code> element.
+  </audio></li>
+  {% endfor %}
+  </ul>
+  <ul>
+  {% for ipa in word.ipa_set.all %}
+    <li>/{{ ipa.ipa }}/</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <h4>
+    Pronunciation info for {{ word.word }} was not found.
+  </h4>
+{% endif %}
+
+<a href="{{word.wiktionary_url}}">
+  See this word on wiktionary
+</a>
