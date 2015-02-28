@@ -9,7 +9,7 @@ urlpatterns = patterns('',
             url(r'^$', views.wordlists, name='wordlists'),
             url(r'^quiz/$', views.quiz, name='quiz'),
             url(r'^quiz/(?P<q_id>\d+)/$', views.quiz, name='quiz'),
-            url(r'^quiz/(?P<q_id>\d+)/q$', views.quiz_question, name='quiz_question'),
+            url(r'^quiz/(?P<q_id>\d+)/q/$', views.quiz_question, name='quiz_question'),
         )))
     ))),
 )

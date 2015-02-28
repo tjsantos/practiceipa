@@ -13,10 +13,13 @@ class Word(models.Model):
     def get_absolute_url(self):
         return reverse('ipa:detail', kwargs={'search': self.word, 'lang': self.lang})
 
+    def matches_ipa(self, ipa):
+        return bool(self.ipa_set.filter(ipa__exact=ipa))
+
 
 ACCENTS = (
     ('US', 'American'),
-    ('UK', 'British'),
+    ('GB', 'British'),
     ('OT', 'Other'),
     ('', 'Unspecified'),
 )

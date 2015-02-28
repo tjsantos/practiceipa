@@ -1,0 +1,17 @@
+{% extends "ipa/base.html" %}
+
+{% block content %}
+
+
+<div>quiz question goes here</div>
+<form action="." method="post">
+  {% csrf_token %}
+  {{ question_form }}
+  {% if correct %}
+    <input type="submit" name="action" value="next_word" />
+  {% else %}
+    <input type="submit" name="action" value="check" />
+  {% endif %}
+</form>
+
+{% endblock %}
