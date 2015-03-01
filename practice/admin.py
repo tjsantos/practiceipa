@@ -1,12 +1,11 @@
 from django.contrib import admin
 from ipa.models import Word
-from practice.models import Wordlist
+from practice.models import Wordlist, WordlistWord
 
-#class WordInline(admin.TabularInline):
-#    model = Word
+class WordlistWordInline(admin.TabularInline):
+    model = WordlistWord
 
 class WordlistAdmin(admin.ModelAdmin):
-    filter_horizontal = ('words',)
-#    inlines = [WordInline]
+    inlines = (WordlistWordInline,)
 
 admin.site.register(Wordlist, WordlistAdmin)

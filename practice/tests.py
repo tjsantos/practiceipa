@@ -41,3 +41,7 @@ class WordlistModelTest(TestCase):
         wordlist.name = 'a' * (1 + max_slug_length)
         wordlist.save()
         self.assertEqual('a' * max_slug_length, wordlist.slug)
+
+class WordlistWordModelTest(TestCase):
+
+    pass

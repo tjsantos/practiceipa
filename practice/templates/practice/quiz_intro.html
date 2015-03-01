@@ -2,10 +2,9 @@
 
 {% block content %}
 
-{% include "ipa/word_info.html" %}
+{% include "ipa/word_info.html" with word=word_progress.word %}
 
-{# with word variable #}
-<a href="{{ q_url }}">
+<a href="{{ word_progress.get_absolute_url }}">
   Link to quiz question goes here
 </a>
 

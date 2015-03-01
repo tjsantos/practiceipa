@@ -16,6 +16,9 @@ class Word(models.Model):
     def matches_ipa(self, ipa):
         return bool(self.ipa_set.filter(ipa__exact=ipa))
 
+    def __str__(self):
+        return self.word
+
 
 ACCENTS = (
     ('US', 'American'),
@@ -29,6 +32,9 @@ class Ipa(models.Model):
     accent = models.CharField(max_length=2, choices=ACCENTS, default='', blank=True)
     word = models.ForeignKey(Word)
 
+    def __str__(self):
+        return '/{}/'.format(self.ipa)
+
 class Audio(models.Model):
     audiofile = models.FileField()
     accent = models.CharField(max_length=2, choices=ACCENTS, default='', blank=True)
@@ -38,3 +44,6 @@ class Audio(models.Model):
         '''Delete associated files'''
         self.audiofile.delete()
         super().delete(*args, **kwargs)
+
+    def __str__(self):
+        return self.audiofile.url

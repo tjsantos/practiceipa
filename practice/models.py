@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.utils.text import slugify
 from ipa.models import Word
 from ordered_model.models import OrderedModel
@@ -22,6 +23,12 @@ class Wordlist(models.Model):
         self.slug = slugify(self.name)[:self._meta.get_field('slug').max_length]
         super().save(*args, **kwargs)
 
+    def ipa_list(self):
+        # TODO: how to manage multiple choice quiz?
+        words = self.words.all().prefetch_related('ipa_set')
+        result  = [ipa for word in words for ipa in word.ipa_set]
+        return result
+
 class WordlistWord(OrderedModel):
     wordlist = models.ForeignKey(Wordlist, related_name='wordlist_words')
     word = models.ForeignKey(Word)
@@ -29,13 +36,14 @@ class WordlistWord(OrderedModel):
     # get order id from model field `order` as a 0-indexed positive integer
 
     class Meta(OrderedModel.Meta):
-        pass # placeholder to remember to inherit from ordered model
+        unique_together = ('wordlist', 'word')
 
     def get_absolute_url(self):
-        #return redirect(reverse(
-        #    'practice:quiz',
-        #    kwargs={'wordlist_id': wordlist.id, 'wordlist_slug': wordlist.slug, 'q_id': next_q_id}
-        #))
+        return reverse('practice:quiz', kwargs={
+            'wordlist_id': self.wordlist.id,
+            'wordlist_slug': self.wordlist.slug,
+            'q_id': self.order + 1,
+        })
 
 class WordProgress(models.Model):
     '''track the progress of wordlist words for each user'''
@@ -64,28 +72,41 @@ class WordProgress(models.Model):
 
     @classmethod
     def prepare(cls, user, wordlist):
-        '''if necessary, initialize word progress for the given user and wordlist'''
-        for wordlist_word in wordlist.wordlist_words.all():
-            cls.create(wordlist_word=wordlist_word, user=user)
+        '''initialize word progress for the given user and wordlist'''
+        # TODO: only execute if necessary
+        wordlist_words = wordlist.wordlist_words.all().prefetch_related('word__ipa_set')
+        for wordlist_word in wordlist_words:
+            cls.objects.get_or_create(wordlist_word=wordlist_word, user=user)
 
-    def get_mc_form(self):
+    @property
+    def mc_form(self):
         pass
 
     @classmethod
-    def get_next_word(cls):
-        raise cls.DoesNotExist
+    def get_next_word(cls, user, wordlist):
+        wp_qset = cls.objects.filter(user=user, wordlist_word__wordlist=wordlist)
+        wp_qset = wp_qset.filter(correct=False).order_by('wordlist_word')
+        try:
+            return wp_qset[0]
+        except IndexError:
+            raise cls.DoesNotExist
 
     def get_absolute_url(self):
-        return reverse(
-            'practice:quiz_question',
-            kwargs={'wordlist_id': wordlist.id, 'wordlist_slug': wordlist.slug, 'q_id': next_q_id}
-        )
-
-class IpaChoice(models.Model):
-    '''multiple choice answer for each word quiz'''
-    word_progress = models.ForeignKey(WordProgress, related_name='ipa_choices')
-    ipa = models.CharField(max_length=200)
+        return reverse('practice:quiz_question', kwargs={
+            'wordlist_id': self.wordlist.id,
+            'wordlist_slug': self.wordlist.slug,
+            'q_id': self.order + 1,
+        })
 
 class SessionUser(models.Model):
     # automatic ids for each session
     pass
+
+#class IpaChoice(models.Model):
+#    '''multiple choice answer for each word quiz'''
+#    word_progress = models.ForeignKey(WordProgress, related_name='ipa_choices')
+#    ipa = models.CharField(max_length=200)
+#
+#    class Meta:
+#        unique_together = ('word_progress', 'ipa')
+#

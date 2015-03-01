@@ -35,6 +35,9 @@ def quiz(request, wordlist_id, wordlist_slug=None, q_id=None):
         # show word info and link to quiz question
         try:
             # word_progress = wordlist.word_progress.filter(user).get(wordlist_word__order)
+            word_progress = WordProgress.objects.get(
+                user=user, wordlist_word__wordlist=wordlist, wordlist_word__order=(int(q_id) - 1)
+            )
         except WordProgress.DoesNotExist:
             raise Http404('Error retreiving quiz data.')
         else:
@@ -61,7 +64,7 @@ def prepare_quiz_session(request, wordlist):
     '''If necessary, create user and associated word progress for the given wordlist, and set
     session id'''
     if 'id' not in request.session:
-        user = SessionUser.create()
+        user = SessionUser.objects.create()
         request.session['id'] = user.id
     else:
         user = SessionUser.objects.get(id=request.session['id'])
