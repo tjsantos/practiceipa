@@ -1,5 +1,6 @@
 from django.test import TestCase
-from practice.models import Wordlist
+from ipa.models import Word
+from practice.models import Wordlist, WordlistWord
 from django.core.urlresolvers import reverse, resolve
 from django.utils.text import slugify
 
@@ -23,7 +24,8 @@ class WordlistViewTest(TestCase):
         wordlist = Wordlist.objects.create(name='healthy foods')
         words = ['apple', 'banana', 'carrot']
         for word in words:
-            wordlist.words.create(word=word)
+            word_object = Word.objects.create(word=word)
+            WordlistWord.objects.create(word=word_object, wordlist=wordlist)
 
         response = self.client.get(wordlist.get_absolute_url())
         for word in words:
