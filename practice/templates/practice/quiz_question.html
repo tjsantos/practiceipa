@@ -3,11 +3,14 @@
 {% block content %}
 
 
-<div>quiz question goes here</div>
+{% with word=word_progress.word %}
+<a href="{{ word.get_absolute_url }}">{{ word.word }}</a>
+{% endwith %}
+
 <form action="." method="post">
   {% csrf_token %}
   {{ question_form }}
-  {% if correct %}
+  {% if word_progress.correct %}
     <input type="submit" name="action" value="next_word" />
   {% else %}
     <input type="submit" name="action" value="check" />

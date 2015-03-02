@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.utils.text import slugify
 from ipa.models import Word
 from ordered_model.models import OrderedModel
+import random
 
 class Wordlist(models.Model):
     name = models.CharField(max_length=100)
@@ -23,10 +24,11 @@ class Wordlist(models.Model):
         self.slug = slugify(self.name)[:self._meta.get_field('slug').max_length]
         super().save(*args, **kwargs)
 
+    @property
     def ipa_list(self):
         # TODO: how to manage multiple choice quiz?
         words = self.words.all().prefetch_related('ipa_set')
-        result  = [ipa for word in words for ipa in word.ipa_set]
+        result  = [ipa for word in words for ipa in word.ipa_set.all()]
         return result
 
 class WordlistWord(OrderedModel):
@@ -68,7 +70,10 @@ class WordProgress(models.Model):
         return self.wordlist_word.order
 
     def check_answer(self, ipa_input):
-        return self.word.matches_ipa(ipa_input)
+        if self.word.matches_ipa(ipa_input):
+            self.correct = True
+            self.save()
+        return self.correct
 
     @classmethod
     def prepare(cls, user, wordlist):
@@ -78,14 +83,37 @@ class WordProgress(models.Model):
         for wordlist_word in wordlist_words:
             cls.objects.get_or_create(wordlist_word=wordlist_word, user=user)
 
-    @property
-    def mc_form(self):
-        pass
+    def mc_choices(self):
+        # obtain multiple choice options
+        # grab n random words in the wordlist to populate choices
+        n = 4 # total number of mc_choices
+        words = Word.objects.filter(wordlist=self.wordlist).order_by('?').exclude(word=self.word)
+        mc_choices = []
+        for word in words[:n]:
+            ipa = word.ipa_set.first()
+            mc_choices.append(self.ipa_choice_tuple(ipa))
+        # place the correct answer in the choices
+        ipa_answer = self.word.ipa_set.first()
+        answer_choice_tuple = self.ipa_choice_tuple(ipa_answer)
+        if len(mc_choices) < n:
+            mc_choices.append(answer_choice_tuple)
+        else:
+            idx_replace = random.randrange(len(mc_choices))
+            mc_choices[idx_replace] = answer_choice_tuple
+        return mc_choices
+
+    @classmethod
+    def ipa_choice_tuple(cls, ipa):
+        return (ipa.ipa, str(ipa))
 
     @classmethod
     def get_next_word(cls, user, wordlist):
         wp_qset = cls.objects.filter(user=user, wordlist_word__wordlist=wordlist)
+        for wp in wp_qset:
+            print(wp.word)
         wp_qset = wp_qset.filter(correct=False).order_by('wordlist_word')
+        for wp in wp_qset:
+            print(wp.word)
         try:
             return wp_qset[0]
         except IndexError:
@@ -97,6 +125,7 @@ class WordProgress(models.Model):
             'wordlist_slug': self.wordlist.slug,
             'q_id': self.order + 1,
         })
+
 
 class SessionUser(models.Model):
     # automatic ids for each session

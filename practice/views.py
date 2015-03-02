@@ -23,18 +23,10 @@ def quiz(request, wordlist_id, wordlist_slug=None, q_id=None):
     prepare_quiz_session(request, wordlist)
     user = get_object_or_404(SessionUser, id=request.session['id'])
     if not q_id:
-        # redirect to first unsolved q
-        try:
-            word_progress = WordProgress.get_next_word(user, wordlist)
-        except WordProgress.DoesNotExist:
-            messages.info(request, 'You have already completed this quiz.')
-            return redirect(wordlist)
-        else:
-            return redirect(word_progress.wordlist_word)
+        return redirect_next_question(request, user, wordlist)
     else:
         # show word info and link to quiz question
         try:
-            # word_progress = wordlist.word_progress.filter(user).get(wordlist_word__order)
             word_progress = WordProgress.objects.get(
                 user=user, wordlist_word__wordlist=wordlist, wordlist_word__order=(int(q_id) - 1)
             )
@@ -44,20 +36,28 @@ def quiz(request, wordlist_id, wordlist_slug=None, q_id=None):
             return render(request, 'practice/quiz_intro.html', {'word_progress': word_progress})
 
 def quiz_question(request, wordlist_id, wordlist_slug, q_id):
-    correct = False
+    wordlist = get_object_or_404(Wordlist, pk=wordlist_id)
+    prepare_quiz_session(request, wordlist)
+    user = get_object_or_404(SessionUser, id=request.session['id'])
+    try:
+        word_progress = WordProgress.objects.get(
+            user=user, wordlist_word__wordlist=wordlist, wordlist_word__order=(int(q_id) - 1)
+        )
+    except WordProgress.DoesNotExist:
+        raise Http404('Error retreiving quiz data.')
+
     if request.method == 'POST':
-        if request.POST['action'] == 'next_question':
-            return redirect(reverse('practice:quiz',
-                kwargs={'wordlist_id': wordlist_id, 'wordlist_slug': wordlist_slug}
-            ))
+        if request.POST['action'] == 'next_word':
+            return redirect_next_question(request, user, wordlist)
         else:
-            question_form = QuizQuestionForm(wordlist_id, q_id, request.POST)
+            question_form = QuizQuestionForm(word_progress.mc_choices(), request.POST)
             if question_form.is_valid():
-                correct = True
+                word_progress.check_answer(question_form.cleaned_data['input_choice'])
     else:
-        question_form = QuizQuestionForm(wordlist_id, q_id)
+        question_form = QuizQuestionForm(word_progress.mc_choices())
+
     return render(request, 'practice/quiz_question.html',
-        {'question_form': question_form, 'correct': correct}
+        {'question_form': question_form, 'word_progress': word_progress}
     )
 
 def prepare_quiz_session(request, wordlist):
@@ -69,3 +69,14 @@ def prepare_quiz_session(request, wordlist):
     else:
         user = SessionUser.objects.get(id=request.session['id'])
     WordProgress.prepare(user, wordlist)
+
+def redirect_next_question(request, user, wordlist):
+    # redirect to first unsolved q
+    try:
+        word_progress = WordProgress.get_next_word(user, wordlist)
+    except WordProgress.DoesNotExist:
+        messages.info(request, 'You have already completed this quiz.')
+        return redirect(wordlist)
+    else:
+        return redirect(word_progress)
+
