@@ -10,6 +10,7 @@ urlpatterns = patterns('',
             url(r'^quiz/$', views.quiz, name='quiz'),
             url(r'^quiz/(?P<q_id>\d+)/$', views.quiz, name='quiz'),
             url(r'^quiz/(?P<q_id>\d+)/q/$', views.quiz_question, name='quiz_question'),
+            url(r'^reset/$', views.reset_progress, name='reset_progress'),
         )))
     ))),
 )

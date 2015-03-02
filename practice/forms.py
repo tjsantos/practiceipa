@@ -9,3 +9,6 @@ class QuizQuestionForm(forms.Form):
         # create quiz question choices on initialization
         super().__init__(*args, **kwargs)
         self.fields['input_choice'].choices = mc_choices
+
+class ResetProgressForm(forms.Form):
+    pass

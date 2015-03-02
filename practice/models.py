@@ -109,11 +109,7 @@ class WordProgress(models.Model):
     @classmethod
     def get_next_word(cls, user, wordlist):
         wp_qset = cls.objects.filter(user=user, wordlist_word__wordlist=wordlist)
-        for wp in wp_qset:
-            print(wp.word)
         wp_qset = wp_qset.filter(correct=False).order_by('wordlist_word')
-        for wp in wp_qset:
-            print(wp.word)
         try:
             return wp_qset[0]
         except IndexError:
@@ -126,6 +122,9 @@ class WordProgress(models.Model):
             'q_id': self.order + 1,
         })
 
+    @classmethod
+    def reset_progress(cls, user, wordlist):
+        cls.objects.filter(user=user, wordlist_word__wordlist=wordlist).update(correct=False)
 
 class SessionUser(models.Model):
     # automatic ids for each session

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from practice.models import Wordlist, SessionUser, WordProgress, WordlistWord
-from practice.forms import QuizQuestionForm
+from practice.forms import QuizQuestionForm, ResetProgressForm
 from ipa.models import Word
 from django.http import Http404
 
@@ -15,7 +15,13 @@ def wordlists(request, wordlist_id, wordlist_slug=None):
     if request.path != wordlist.get_absolute_url():
         return redirect(wordlist)
     else:
-        return render(request, 'practice/wordlists.html', {'wordlist': wordlist})
+        reset_url = reverse('practice:reset_progress',
+            kwargs={'wordlist_id': wordlist.id, 'wordlist_slug': wordlist.slug}
+        )
+        reset_form = ResetProgressForm()
+        return render(request, 'practice/wordlists.html',
+            {'wordlist': wordlist, 'reset_url': reset_url, 'reset_form': reset_form}
+        )
 
 def quiz(request, wordlist_id, wordlist_slug=None, q_id=None):
     '''q_id is 1-based index of words in the wordlist's order'''
@@ -80,3 +86,15 @@ def redirect_next_question(request, user, wordlist):
     else:
         return redirect(word_progress)
 
+def reset_progress(request, wordlist_id, wordlist_slug=None):
+    wordlist = get_object_or_404(Wordlist, pk=wordlist_id)
+    prepare_quiz_session(request, wordlist)
+    user = get_object_or_404(SessionUser, id=request.session['id'])
+    if request.method == 'POST':
+        form = ResetProgressForm(request.POST)
+        if form.is_valid():
+            WordProgress.reset_progress(user, wordlist)
+            messages.info(request, 'Progress reset')
+            return redirect(wordlist)
+    messages.error(request, 'Error reseting progress')
+    return redirect(wordlist)
