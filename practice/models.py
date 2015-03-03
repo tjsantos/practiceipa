@@ -126,9 +126,23 @@ class WordProgress(models.Model):
     def reset_progress(cls, user, wordlist):
         cls.objects.filter(user=user, wordlist_word__wordlist=wordlist).update(correct=False)
 
+    @classmethod
+    def progress(cls, user, wordlist):
+        correct = cls.objects.filter(user=user, wordlist_word__wordlist=wordlist, correct=True)
+        num_correct = correct.count()
+        return num_correct
+
 class SessionUser(models.Model):
     # automatic ids for each session
-    pass
+
+    @classmethod
+    def from_session(cls, session):
+        if 'id' not in session:
+            user = cls.objects.create()
+            session['id'] = user.id
+        else:
+            user = cls.objects.get(id=session['id'])
+        return user
 
 #class IpaChoice(models.Model):
 #    '''multiple choice answer for each word quiz'''

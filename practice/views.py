@@ -11,6 +11,7 @@ def index(request):
     return render(request, 'practice/index.html', {'wordlists': wordlists})
 
 def wordlists(request, wordlist_id, wordlist_slug=None):
+    user = SessionUser.from_session(request.session)
     wordlist = get_object_or_404(Wordlist, pk=wordlist_id)
     if request.path != wordlist.get_absolute_url():
         return redirect(wordlist)
@@ -19,9 +20,11 @@ def wordlists(request, wordlist_id, wordlist_slug=None):
             kwargs={'wordlist_id': wordlist.id, 'wordlist_slug': wordlist.slug}
         )
         reset_form = ResetProgressForm()
-        return render(request, 'practice/wordlists.html',
-            {'wordlist': wordlist, 'reset_url': reset_url, 'reset_form': reset_form}
-        )
+        wordlist_progress = WordProgress.progress(user, wordlist)
+        return render(request, 'practice/wordlists.html', {
+            'wordlist': wordlist, 'reset_url': reset_url, 'reset_form': reset_form,
+            'wordlist_progress': wordlist_progress,
+        })
 
 def quiz(request, wordlist_id, wordlist_slug=None, q_id=None):
     '''q_id is 1-based index of words in the wordlist's order'''

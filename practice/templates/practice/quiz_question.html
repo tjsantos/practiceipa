@@ -3,6 +3,10 @@
 {% block content %}
 
 
+<a href="{{ word_progress.wordlist.get_absolute_url }}">
+  Back to wordlist: {{ word_progress.wordlist.name }}
+</a>
+<br/>
 {% with word=word_progress.word %}
 <a href="{{ word.get_absolute_url }}">{{ word.word }}</a>
 {% endwith %}
@@ -11,8 +15,10 @@
   {% csrf_token %}
   {{ question_form }}
   {% if word_progress.correct %}
+    <div>Correct!</div>
     <input type="submit" name="action" value="next_word" />
   {% else %}
+  <div>{% if question_form.is_bound %}Incorrect.{% endif %}</div>
     <input type="submit" name="action" value="check" />
   {% endif %}
 </form>

@@ -1,8 +1,9 @@
 boto==2.36.0
 dj-database-url==0.3.0
 Django==1.7.4
+django-ordered-model==0.4.0
 django-storages-redux==1.2.2
-ipython==2.4.1
+ipython==3.0.0
 psycopg2==2.5.4
 pyreadline==2.0
 waitress==0.8.9
