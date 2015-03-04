@@ -65,15 +65,17 @@ class AudioModelTest(TestCase):
         word = Word.objects.create(word='abc')
         a.word = word
         try:
-            folder = mkdtemp()
-            with self.settings(MEDIA_ROOT=folder):
+            temp_folder = mkdtemp()
+            subdirectory = Audio._meta.get_field('audiofile').upload_to
+            filespath = os.path.join(temp_folder, subdirectory)
+            with self.settings(MEDIA_ROOT=temp_folder):
                 a.audiofile.save('asdf', ContentFile('something'))
-                self.assertEqual(1, len(os.listdir(folder)))
+                self.assertEqual(1, len(os.listdir(filespath)))
                 # deleting the object should delete the associated file
                 a.delete()
-                self.assertEqual(0, len(os.listdir(folder)))
+                self.assertEqual(0, len(os.listdir(filespath)))
         finally:
-            rmtree(folder)
+            rmtree(temp_folder)
             # TODO: `with` block for temp folders?
 
 class SearchTest(TestCase):
