@@ -9,7 +9,7 @@
   </ul>
   <ul>
   {% for ipa in word.ipa_set.all %}
-    <li>/{{ ipa.ipa }}/</li>
+    <li>{{ ipa }}</li>
   {% endfor %}
   </ul>
 {% else %}

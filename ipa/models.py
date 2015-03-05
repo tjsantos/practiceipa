@@ -32,8 +32,13 @@ class Ipa(models.Model):
     accent = models.CharField(max_length=2, choices=ACCENTS, default='', blank=True)
     word = models.ForeignKey(Word)
 
+    def save(self, *args, **kwargs):
+        self.ipa = self.ipa.strip('/')
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return '/{}/'.format(self.ipa)
+        accent_tag = ' (GB)' if self.accent == 'GB' else ''
+        return '/{}/{}'.format(self.ipa, accent_tag)
 
 class Audio(models.Model):
     audiofile = models.FileField(upload_to='audio')
