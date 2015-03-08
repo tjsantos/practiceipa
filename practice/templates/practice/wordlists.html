@@ -2,20 +2,41 @@
 
 {% block content %}
 
-<h3>{{ wordlist.name }}</h3>
+<div class="row">
+  <div class="col-md-6">
+    <h3>{{ wordlist.name }}</h3>
+  </div>
 
-<a href="{% url 'practice:quiz' wordlist_id=wordlist.id wordlist_slug=wordlist.slug %}">
-  Quiz Yourself
-</a>
-<h4>Progress: {{ wordlist_progress.correct }} / {{ wordlist_progress.total }}</h4>
-<div class="progress">
-  <div class="progress-bar" style="width: {{ wordlist_progress.percentage }}%"></div>
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Progress: {{ wordlist_progress.correct }} / {{ wordlist_progress.total }}</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="progress">
+          <div class="progress-bar" style="width: {{ wordlist_progress.percentage }}%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <a href="{% url 'practice:quiz' wordlist_id=wordlist.id wordlist_slug=wordlist.slug %}"
+           role="button" class="btn btn-success">
+          Quiz Yourself
+        </a>
+      </div>
+      <div class="col-md-6">
+        <form action="{{ reset_url }}" method="post">
+          {% csrf_token %}
+          {{ reset_form }}
+          <input type="submit" class="btn btn-warning" value="Reset progress" />
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
-<form action="{{ reset_url }}" method="post">
-  {% csrf_token %}
-  {{ reset_form }}
-  <input type="submit" value="Reset progress" />
-</form>
 
 {% for word in wordlist.words.all %}
 <ul>
