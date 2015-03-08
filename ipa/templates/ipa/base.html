@@ -8,16 +8,18 @@
   <title>Practice IPA</title>
 
   <link href="{% static 'bootstrap-3.3.2/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'bootstrap-3.3.2/css/bootstrap-theme.min.css' %}" rel="stylesheet">
   <link href="{% static 'base.css' %}" rel="stylesheet">
 </head>
 
 <body>
 {% if messages %}
-<ul class="messages">
+<div class="container">
   {% for message in messages %}
-  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+  <div class="alert alert-{{ message.tags }}">{{ message }}</li>
   {% endfor %}
-</ul>
+  </div>
+</div>
 {% endif %}
 
 <div class="container">
@@ -52,10 +54,14 @@
 </div>
 
 <div class="container">
-<div id="footer">
-Data from <a href="//www.wiktionary.org">wiktionary</a>
-under the <a href="//creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike License</a>.
-</div>
+<footer class="footer">
+<p class="text-muted">
+  Data from <a href="//www.wiktionary.org">wiktionary</a>
+  under the <a href="//creativecommons.org/licenses/by-sa/3.0/">
+    Creative Commons Attribution-ShareAlike License
+  </a>.
+</p>
+</footer>
 </div>
 
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
