@@ -2,7 +2,13 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Practice IPA</title>
+
+  <link href="{% static 'bootstrap-3.3.2/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'base.css' %}" rel="stylesheet">
 </head>
 
 <body>
@@ -14,24 +20,45 @@
 </ul>
 {% endif %}
 
-<h1>Practice IPA (in development)</h1>
-{% block num_entries %}{% endblock %}
-<form action="{% url 'ipa:search' %}" method="get">
-  <input id="search" type="text" name="search">
-  <select name="lang" style="display: none">
-    <option value="en">English</option>
-  </select>
-  <button type="submit">Search</button>
-</form>
+<div class="container">
+<nav class="navbar navbar-default">
+  <ul class="nav navbar-nav">
+    <li><a class="navbar-brand" href="{% url 'ipa:index' %}">Practice IPA</a></li>
+    <li><a href="{% url 'practice:index' %}">Wordlists</a></li>
+    <li>
+      <form class="navbar-form navbar-left" role="search"
+            action="{% url 'ipa:search' %}" method="get"
+      >
+        <div class="form-group">
+          <input id="search" name="search" class="form-control" type="text" placeholder="Search">
+          <select name="lang" style="display: none">
+            <option value="en">English</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-default">
+          <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </form>
+    </li>
+  </ul>
+</nav>
+</div>
 
+<div class="container">
+{% block num_entries %}{% endblock %}
 <div id="content">
 {% block content %}{% endblock %}
 </div>
+</div>
 
+<div class="container">
 <div id="footer">
 Data from <a href="//www.wiktionary.org">wiktionary</a>
 under the <a href="//creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike License</a>.
 </div>
+</div>
 
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="{% static 'bootstrap-3.3.2/js/bootstrap.min.js' %}"></script>
 </body>
 </html>
