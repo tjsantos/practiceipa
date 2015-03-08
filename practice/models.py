@@ -131,7 +131,10 @@ class WordProgress(models.Model):
         words = list(cls.objects.filter(user=user, wordlist_word__wordlist=wordlist))
         total = len(words)
         correct = sum(1 for word in words if word.correct == True)
-        percentage = int(100 * correct / total)
+        try:
+            percentage = int(100 * correct / total)
+        except ZeroDivisionError:
+            percentage = 0
         return {'total': total, 'correct': correct, 'percentage': percentage}
 
 class SessionUser(models.Model):
