@@ -128,9 +128,11 @@ class WordProgress(models.Model):
 
     @classmethod
     def progress(cls, user, wordlist):
-        correct = cls.objects.filter(user=user, wordlist_word__wordlist=wordlist, correct=True)
-        num_correct = correct.count()
-        return num_correct
+        words = list(cls.objects.filter(user=user, wordlist_word__wordlist=wordlist))
+        total = len(words)
+        correct = sum(1 for word in words if word.correct == True)
+        percentage = int(100 * correct / total)
+        return {'total': total, 'correct': correct, 'percentage': percentage}
 
 class SessionUser(models.Model):
     # automatic ids for each session

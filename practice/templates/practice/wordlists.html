@@ -7,7 +7,10 @@
 <a href="{% url 'practice:quiz' wordlist_id=wordlist.id wordlist_slug=wordlist.slug %}">
   Quiz Yourself
 </a>
-<h4>Progress: {{ wordlist_progress }} / {{ wordlist.words.count }}</h4>
+<h4>Progress: {{ wordlist_progress.correct }} / {{ wordlist_progress.total }}</h4>
+<div class="progress">
+  <div class="progress-bar" style="width: {{ wordlist_progress.percentage }}%"></div>
+</div>
 <form action="{{ reset_url }}" method="post">
   {% csrf_token %}
   {{ reset_form }}

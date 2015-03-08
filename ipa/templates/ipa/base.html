@@ -13,16 +13,15 @@
 </head>
 
 <body>
-{% if messages %}
 <div class="container">
+
+{% if messages %}
   {% for message in messages %}
   <div class="alert alert-{{ message.tags }}">{{ message }}</li>
   {% endfor %}
   </div>
-</div>
 {% endif %}
 
-<div class="container">
 <nav class="navbar navbar-default">
   <ul class="nav navbar-nav">
     <li><a class="navbar-brand" href="{% url 'ipa:index' %}">Practice IPA</a></li>
@@ -44,16 +43,12 @@
     </li>
   </ul>
 </nav>
-</div>
 
-<div class="container">
 {% block num_entries %}{% endblock %}
 <div id="content">
 {% block content %}{% endblock %}
 </div>
-</div>
 
-<div class="container">
 <footer class="footer">
 <p class="text-muted">
   Data from <a href="//www.wiktionary.org">wiktionary</a>
@@ -62,8 +57,8 @@
   </a>.
 </p>
 </footer>
-</div>
 
+</div>
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 <script src="{% static 'bootstrap-3.3.2/js/bootstrap.min.js' %}"></script>
 </body>
