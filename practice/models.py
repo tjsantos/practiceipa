@@ -41,11 +41,15 @@ class WordlistWord(OrderedModel):
     class Meta(OrderedModel.Meta):
         unique_together = ('wordlist', 'word')
 
+    @property
+    def order_1based(self):
+        return self.order + 1
+
     def get_absolute_url(self):
         return reverse('practice:quiz', kwargs={
             'wordlist_id': self.wordlist.id,
             'wordlist_slug': self.wordlist.slug,
-            'q_id': self.order + 1,
+            'q_id': self.order_1based,
         })
 
 class WordProgress(models.Model):

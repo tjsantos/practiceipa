@@ -38,10 +38,24 @@
   </div>
 </div>
 
+<ol>
 {% for word in wordlist.words.all %}
-<ul>
-  <li><a href="{{ word.get_absolute_url }}">{{ word.word }}</a></li>
-</ul>
+  <li>
+  <ul class="list-inline">
+    <li><a href="{{ word.get_absolute_url }}">{{ word }}</a></li>
+    {% for ipa in word.ipa_set.all %}
+      <li>{{ ipa }}</li>
+    {% endfor %}
+  </ul>
+  </li>
+  <ul class="list-unstyled">
+    {% for audio in word.audio_set.all %}
+    <li><audio controls src={{ audio.audiofile.url }}>
+        Your browser does not support the <code>audio</code> element.
+    </audio></li>
+    {% endfor %}
+  </ul>
 {% endfor %}
+</ol>
 
 {% endblock %}
