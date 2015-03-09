@@ -59,11 +59,11 @@ def quiz_question(request, wordlist_id, wordlist_slug, q_id):
         if request.POST['action'] == 'next_word':
             return redirect_next_question(request, user, wordlist)
         else:
-            question_form = QuizQuestionForm(word_progress.mc_choices(), request.POST)
+            question_form = word_progress.mc_question_form(request)
             if question_form.is_valid():
                 word_progress.check_answer(question_form.cleaned_data['input_choice'])
     else:
-        question_form = QuizQuestionForm(word_progress.mc_choices())
+        question_form = word_progress.mc_question_form(request)
 
     return render(request, 'practice/quiz_question.html',
         {'question_form': question_form, 'word_progress': word_progress}

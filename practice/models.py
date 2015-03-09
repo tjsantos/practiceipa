@@ -2,8 +2,9 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django.utils.text import slugify
-from ipa.models import Word
+from ipa.models import Word, Ipa
 from ordered_model.models import OrderedModel
+from practice.forms import QuizQuestionForm
 import random
 
 class Wordlist(models.Model):
@@ -83,24 +84,29 @@ class WordProgress(models.Model):
         for wordlist_word in wordlist_words:
             cls.objects.get_or_create(wordlist_word=wordlist_word, user=user)
 
-    def mc_choices(self):
-        # obtain multiple choice options
-        # grab n random words in the wordlist to populate choices
-        n = 4 # total number of mc_choices
-        words = Word.objects.filter(wordlist=self.wordlist).order_by('?').exclude(word=self.word)
-        mc_choices = []
-        for word in words[:n]:
-            ipa = word.ipa_set.first()
-            mc_choices.append(self.ipa_choice_tuple(ipa))
-        # place the correct answer in the choices
+    def mc_question_form(self, request):
+        n = 4 # number of mc choices
+        # arrange answers based on random seed for a given user
+        if not request.session.get('random_seed', False):
+            request.session['random_seed'] = random.randint(1, 10000)
+        seed = request.session['random_seed']
+        random.seed(seed)
+
+        ipas = list(Ipa.objects.filter(word__wordlist=self.wordlist))
         ipa_answer = self.word.ipa_set.first()
-        answer_choice_tuple = self.ipa_choice_tuple(ipa_answer)
-        if len(mc_choices) < n:
-            mc_choices.append(answer_choice_tuple)
+        # get n random ipas
+        if len(ipas) < n:
+            ipas.extend([ipa_answer for _ in range(n - len(ipas))])
+        mc_ipas = random.sample(ipas, n)
+        # shuffle in the correct answer
+        if ipa_answer not in mc_ipas:
+            mc_ipas[random.randrange(n)] = ipa_answer
+        # put into mc form
+        mc_choices = (self.ipa_choice_tuple(ipa) for ipa in mc_ipas)
+        if request.method == 'POST':
+            return QuizQuestionForm(mc_choices, request.POST)
         else:
-            idx_replace = random.randrange(len(mc_choices))
-            mc_choices[idx_replace] = answer_choice_tuple
-        return mc_choices
+            return QuizQuestionForm(mc_choices)
 
     @classmethod
     def ipa_choice_tuple(cls, ipa):
