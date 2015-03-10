@@ -48,11 +48,11 @@
     {% endfor %}
   </ul>
   </li>
-  <ul class="list-unstyled">
+  <ul class="list-inline">
     {% for audio in word.audio_set.all %}
     <li><audio controls src={{ audio.audiofile.url }}>
         Your browser does not support the <code>audio</code> element.
-    </audio></li>
+      </audio>{% if audio.accent == "GB" %} (GB) {% endif %}</li>
     {% endfor %}
   </ul>
 {% endfor %}
