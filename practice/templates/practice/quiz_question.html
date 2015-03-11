@@ -3,23 +3,53 @@
 {% block content %}
 
 
-<a href="{{ word_progress.wordlist.get_absolute_url }}">
-  Back to wordlist: {{ word_progress.wordlist.name }}
-</a>
-<br/>
+<div class="row">
+  <div class="col-md-12">
+    <a href="{{ word_progress.wordlist.get_absolute_url }}">
+      Back to wordlist: {{ word_progress.wordlist.name }}
+    </a>
+  </div>
+</div>
+
 {% with word=word_progress.word %}
-<a href="{{ word.get_absolute_url }}">{{ word.word }}</a>
+<div class="row">
+  <div class="col-md-12">
+    <h2><a href="{{ word.get_absolute_url }}">{{ word.word }}</a></h2>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <ul class="list-inline">
+      {% for audio in word.audio_set.all %}
+      <li><audio controls src={{ audio.audiofile.url }}>
+          Your browser does not support the <code>audio</code> element.
+        </audio>{% if audio.accent == "GB" %} (GB) {% endif %}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
 {% endwith %}
 
 <form action="." method="post">
   {% csrf_token %}
-  {{ question_form }}
+  {{ question_form.non_field_errors }}
+  <div class="form-group">
+    {{ question_form.input_choice.errors }}
+    <label for="{{ question_form.input_choice.id_for_label }}">Select the correct IPA:</label>
+    {% for radio in question_form.input_choice %}
+      <div class="radio">
+        {{ radio }}
+      </div>
+    {% endfor %}
+  </div>
   {% if word_progress.correct %}
-    <div>Correct!</div>
-    <input type="submit" name="action" value="next_word" />
+    <div class="alert alert-success" role="alert">Correct!</div>
+    <input class="btn btn-success" type="submit" name="action" value="Continue" />
   {% else %}
-  <div>{% if question_form.is_bound %}Incorrect.{% endif %}</div>
-    <input type="submit" name="action" value="check" />
+    {% if question_form.is_bound %}
+      <div class="alert alert-danger" role="alert">Incorrect.</div>
+    {% endif %}
+    <input class="btn btn-primary" type="submit" name="action" value="Check" />
   {% endif %}
 </form>
 

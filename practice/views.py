@@ -56,7 +56,7 @@ def quiz_question(request, wordlist_id, wordlist_slug, q_id):
         raise Http404('Error retreiving quiz data.')
 
     if request.method == 'POST':
-        if request.POST['action'] == 'next_word':
+        if request.POST['action'] == 'Continue':
             return redirect_next_question(request, user, wordlist)
         else:
             question_form = word_progress.mc_question_form(request)

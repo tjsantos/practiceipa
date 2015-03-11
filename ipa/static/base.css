@@ -1,13 +1,22 @@
-/* Space out content a bit */
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 body {
+    /* Space out content a bit */
     padding-top: 20px;
     padding-bottom: 20px;
+    /* margin bottom by footer height */
+    margin-bottom: 60px;
 }
 
 .footer {
   font-size: 12px;
   position: absolute;
   bottom: 0;
+  height: 60px;
 }
 
 /* customize container to be narrow by default */
