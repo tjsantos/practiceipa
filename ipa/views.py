@@ -2,11 +2,14 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from ipa.models import Word
+from practice.models import Wordlist
 
 def index(request):
-    num_entries = Word.objects.count()
-    context = {'num_entries': num_entries}
-    return render(request, 'ipa/index.html', context)
+    try:
+        wordlist = Wordlist.objects.get(name__iexact='english alphabet')
+    except Wordlist.DoesNotExist:
+        wordlist = None
+    return render(request, 'ipa/index.html', {'wordlist': wordlist})
 
 def detail(request, lang, search):
     if lang not in Word.LANG_CODES:

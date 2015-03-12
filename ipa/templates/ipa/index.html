@@ -1,5 +1,18 @@
 {% extends "ipa/base.html" %}
 
-{% block num_entries %}
-<h2>Entries with IPA: {{ num_entries }}</h2>
+{% block content %}
+<div class="jumbotron">
+  <h2>Welcome!</h2>
+  <p>Check out the
+  {% if wordlist %}
+    <a href="{% url 'practice:index' %}">wordlists</a>,
+    or start with
+    <a class="btn btn-success btn-lg" href="{{ wordlist.get_absolute_url }}" role="button">
+      {{ wordlist.name }}
+    </a>
+  {% else %}
+    <a href="{% url 'practice:index' %}">wordlists</a>.
+  {% endif %}
+  </p>
+</div>
 {% endblock %}
