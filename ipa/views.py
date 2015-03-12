@@ -5,10 +5,7 @@ from ipa.models import Word
 from practice.models import Wordlist
 
 def index(request):
-    try:
-        wordlist = Wordlist.objects.get(name__iexact='english alphabet')
-    except Wordlist.DoesNotExist:
-        wordlist = None
+    wordlist = Wordlist.objects.filter(name__iexact='english alphabet').order_by('id').first()
     return render(request, 'ipa/index.html', {'wordlist': wordlist})
 
 def detail(request, lang, search):
