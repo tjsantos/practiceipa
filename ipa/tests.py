@@ -158,3 +158,17 @@ class IpaModelTest(TestCase):
         a = Word.objects.create(word='a')
         ipa_obj = Ipa.objects.create(word=a, ipa='/slashes/')
         self.assertEqual('slashes', ipa_obj.ipa)
+
+    def test_accent_order(self):
+        # create GB before US
+        a = Word.objects.create(word='a')
+        gb = a.ipa_set.create(ipa='gb', accent='GB')
+        us = a.ipa_set.create(ipa='us', accent='US')
+        # create US before GB
+        b = Word.objects.create(word='a')
+        us2 = b.ipa_set.create(ipa='us', accent='US')
+        gb2 = b.ipa_set.create(ipa='gb', accent='GB')
+
+        # US should come before GB
+        self.assertEqual([us, gb], list(a.ipa_set.all()))
+        self.assertEqual([us2, gb2], list(b.ipa_set.all()))

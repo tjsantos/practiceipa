@@ -14,9 +14,9 @@ class Command(BaseCommand):
             with open(filename, 'r', encoding='utf-8') as f:
                 more_json_words = json.load(f)
             json_words.update(more_json_words)
-        import sys
-        import codecs
-        sys.stdout = codecs.getwriter('utf8')(sys.stdout.buffer)
+        #import sys
+        #import codecs
+        #sys.stdout = codecs.getwriter('utf8')(sys.stdout.buffer)
         db_words = Word.objects.all()
 
         # delete words not present in load file
