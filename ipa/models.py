@@ -58,6 +58,7 @@ class Audio(models.Model):
     audiofile = models.FileField(upload_to='audio')
     accent = models.CharField(max_length=2, choices=ACCENTS, default='', blank=True)
     word = models.ForeignKey(Word)
+    wiki_filename = models.CharField(max_length=100)
 
     class Meta:
         order_with_respect_to = 'word'
