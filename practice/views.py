@@ -13,6 +13,7 @@ def index(request):
 def wordlists(request, wordlist_id, wordlist_slug=None):
     user = SessionUser.from_session(request.session)
     wordlist = get_object_or_404(Wordlist, pk=wordlist_id)
+    WordProgress.prepare(user, wordlist)
     if request.path != wordlist.get_absolute_url():
         return redirect(wordlist)
     else:
@@ -26,28 +27,15 @@ def wordlists(request, wordlist_id, wordlist_slug=None):
             'wordlist_progress': wordlist_progress,
         })
 
-def quiz(request, wordlist_id, wordlist_slug=None, q_id=None):
-    '''q_id is 1-based index of words in the wordlist's order'''
+def quiz(request, wordlist_id, wordlist_slug=None):
     wordlist = get_object_or_404(Wordlist, pk=wordlist_id)
-    prepare_quiz_session(request, wordlist)
-    user = get_object_or_404(SessionUser, id=request.session['id'])
-    if not q_id:
-        return redirect_next_question(request, user, wordlist)
-    else:
-        # show word info and link to quiz question
-        try:
-            word_progress = WordProgress.objects.get(
-                user=user, wordlist_word__wordlist=wordlist, wordlist_word__order=(int(q_id) - 1)
-            )
-        except WordProgress.DoesNotExist:
-            raise Http404('Error retreiving quiz data.')
-        else:
-            return render(request, 'practice/quiz_intro.html', {'word_progress': word_progress})
+    user = SessionUser.from_session(request.session)
+    return redirect_next_question(request, user, wordlist)
 
 def quiz_question(request, wordlist_id, wordlist_slug, q_id):
+    '''q_id is 1-based index of words in the wordlist's order'''
     wordlist = get_object_or_404(Wordlist, pk=wordlist_id)
-    prepare_quiz_session(request, wordlist)
-    user = get_object_or_404(SessionUser, id=request.session['id'])
+    user = SessionUser.from_session(request.session)
     try:
         word_progress = WordProgress.objects.get(
             user=user, wordlist_word__wordlist=wordlist, wordlist_word__order=(int(q_id) - 1)
@@ -68,16 +56,6 @@ def quiz_question(request, wordlist_id, wordlist_slug, q_id):
     return render(request, 'practice/quiz_question.html',
         {'question_form': question_form, 'word_progress': word_progress}
     )
-
-def prepare_quiz_session(request, wordlist):
-    '''If necessary, create user and associated word progress for the given wordlist, and set
-    session id'''
-    if 'id' not in request.session:
-        user = SessionUser.objects.create()
-        request.session['id'] = user.id
-    else:
-        user = SessionUser.objects.get(id=request.session['id'])
-    WordProgress.prepare(user, wordlist)
 
 def redirect_next_question(request, user, wordlist):
     # redirect to first unsolved q
