@@ -1,0 +1,21 @@
+<nav>
+  <ul class="pagination">
+    {% if page_words.has_previous %}
+    <li><a href="{% url 'practice:wordlists' wordlist_id=wordlist.id wordlist_slug=wordlist.slug page=page_words.previous_page_number %}">«</a></li>
+    {% else %}
+    <li class="disabled"><a href="#">«</a></li>
+    {% endif %}
+
+    {% for i in page_range %}
+      <li {% if page_words.number == i %} class="active" {% endif %}>
+        <a href="{% url 'practice:wordlists' wordlist_id=wordlist.id wordlist_slug=wordlist.slug page=i %}">{{ i }}</a>
+      </li>
+    {% endfor %}
+
+    {% if page_words.has_next %}
+    <li><a href="{% url 'practice:wordlists' wordlist_id=wordlist.id wordlist_slug=wordlist.slug page=page_words.next_page_number %}">»</a></li>
+    {% else %}
+    <li class="disabled"><a href="#">»</a></li>
+    {% endif %}
+  </ul>
+</nav>

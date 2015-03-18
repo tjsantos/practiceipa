@@ -12,10 +12,11 @@ class Wordlist(models.Model):
     slug = models.SlugField(db_index=False)
     words = models.ManyToManyField(Word, through='WordlistWord')
 
-    def get_absolute_url(self):
-        return reverse(
-            'practice:wordlists', kwargs={'wordlist_id': self.id, 'wordlist_slug': self.slug}
-        )
+    def get_absolute_url(self, page=None):
+        kwargs={'wordlist_id': self.id, 'wordlist_slug': self.slug}
+        if page not in (None, 1, '1'):
+            kwargs['page'] = page
+        return reverse('practice:wordlists', kwargs=kwargs)
 
     def __str__(self):
         return self.name
@@ -84,7 +85,7 @@ class WordProgress(models.Model):
     def prepare(cls, user, wordlist):
         '''initialize word progress for the given user and wordlist'''
         # TODO: only execute if necessary
-        wordlist_words = wordlist.wordlist_words.all().prefetch_related('word__ipa_set')
+        wordlist_words = wordlist.wordlist_words.all()
         for wordlist_word in wordlist_words:
             cls.objects.get_or_create(wordlist_word=wordlist_word, user=user)
 

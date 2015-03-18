@@ -5,27 +5,37 @@ from practice.models import Wordlist, SessionUser, WordProgress, WordlistWord
 from practice.forms import QuizQuestionForm, ResetProgressForm
 from ipa.models import Word
 from django.http import Http404
+from django.core.paginator import Paginator, InvalidPage
 
 def index(request):
     wordlists = Wordlist.objects.all()
     return render(request, 'practice/index.html', {'wordlists': wordlists})
 
-def wordlists(request, wordlist_id, wordlist_slug=None):
+def wordlists(request, wordlist_id, wordlist_slug=None, page=1):
     user = SessionUser.from_session(request.session)
     wordlist = get_object_or_404(Wordlist, pk=wordlist_id)
-    WordProgress.prepare(user, wordlist)
-    if request.path != wordlist.get_absolute_url():
+    if wordlist.slug != wordlist_slug:
+        return redirect(wordlist.get_absolute_url(page=page))
+    paginator = Paginator(wordlist.words.all(), 10) # 10 words per page
+    try:
+        page_words = paginator.page(page)
+    except InvalidPage:
         return redirect(wordlist)
-    else:
-        reset_url = reverse('practice:reset_progress',
-            kwargs={'wordlist_id': wordlist.id, 'wordlist_slug': wordlist.slug}
-        )
-        reset_form = ResetProgressForm()
-        wordlist_progress = WordProgress.progress(user, wordlist)
-        return render(request, 'practice/wordlists.html', {
-            'wordlist': wordlist, 'reset_url': reset_url, 'reset_form': reset_form,
-            'wordlist_progress': wordlist_progress,
-        })
+
+    WordProgress.prepare(user, wordlist)
+    reset_url = reverse('practice:reset_progress',
+        kwargs={'wordlist_id': wordlist.id, 'wordlist_slug': wordlist.slug}
+    )
+    reset_form = ResetProgressForm()
+    wordlist_progress = WordProgress.progress(user, wordlist)
+    # paginator navigation; extend by 2 pages, max of 5 visible
+    first = max(1, page_words.number - 2)
+    last = min(first + 5, paginator.num_pages)
+    page_range = range(first, last + 1)
+    return render(request, 'practice/wordlists.html', {
+        'wordlist': wordlist, 'reset_url': reset_url, 'reset_form': reset_form,
+        'wordlist_progress': wordlist_progress, 'page_range': page_range, 'page_words': page_words
+    })
 
 def quiz(request, wordlist_id, wordlist_slug=None):
     wordlist = get_object_or_404(Wordlist, pk=wordlist_id)

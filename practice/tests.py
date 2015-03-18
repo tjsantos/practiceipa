@@ -31,6 +31,20 @@ class WordlistViewTest(TestCase):
         for word in words:
             self.assertContains(response, word)
 
+    def test_defaults_to_first_page(self):
+        wordlist = Wordlist.objects.create(name='healthy foods')
+        words = ['apple', 'banana', 'carrot']
+        for word in words:
+            word_object = Word.objects.create(word=word)
+            WordlistWord.objects.create(word=word_object, wordlist=wordlist)
+
+        response = self.client.get(wordlist.get_absolute_url())
+        page1 = self.client.get(reverse(
+            'practice:wordlists',
+            kwargs={'wordlist_id': wordlist.id, 'wordlist_slug': wordlist.slug, 'page': 1}
+        ))
+        self.assertHTMLEqual(str(response.content), str(page1.content))
+
 class WordlistModelTest(TestCase):
 
     def test_slugify_on_save(self):
