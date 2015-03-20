@@ -27,7 +27,7 @@
     <li><a class="navbar-brand" href="{% url 'ipa:index' %}">Practice IPA</a></li>
     <li><a href="{% url 'practice:index' %}">Wordlists</a></li>
     <li>
-      <form class="navbar-form navbar-left" role="search"
+      <form class="navbar-form navbar-right" role="search"
             action="{% url 'ipa:search' %}" method="get"
       >
         <div class="form-group">
@@ -41,6 +41,7 @@
         </button>
       </form>
     </li>
+    <li><p class="navbar-text">{{ word_count }} words</p></li>
   </ul>
 </nav>
 

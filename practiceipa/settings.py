@@ -51,6 +51,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'ipa.context_processors.word_count',
+)
+
 ROOT_URLCONF = 'practiceipa.urls'
 
 WSGI_APPLICATION = 'practiceipa.wsgi.application'
