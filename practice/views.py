@@ -79,8 +79,7 @@ def redirect_next_question(request, user, wordlist):
 
 def reset_progress(request, wordlist_id, wordlist_slug=None):
     wordlist = get_object_or_404(Wordlist, pk=wordlist_id)
-    prepare_quiz_session(request, wordlist)
-    user = get_object_or_404(SessionUser, id=request.session['id'])
+    user = SessionUser.from_session(request.session)
     if request.method == 'POST':
         form = ResetProgressForm(request.POST)
         if form.is_valid():
