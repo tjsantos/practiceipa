@@ -53,6 +53,9 @@ class WordlistWord(OrderedModel):
             'q_id': self.order_1based,
         })
 
+    def __str__(self):
+        return str(self.word)
+
 class WordProgress(models.Model):
     '''track the progress of wordlist words for each user'''
     wordlist_word = models.ForeignKey(WordlistWord)

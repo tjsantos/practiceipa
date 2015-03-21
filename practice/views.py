@@ -16,7 +16,7 @@ def wordlists(request, wordlist_id, wordlist_slug=None, page=1):
     wordlist = get_object_or_404(Wordlist, pk=wordlist_id)
     if wordlist.slug != wordlist_slug:
         return redirect(wordlist.get_absolute_url(page=page))
-    paginator = Paginator(wordlist.words.all(), 10) # 10 words per page
+    paginator = Paginator(wordlist.wordlist_words.all(), 10) # 10 words per page
     try:
         page_words = paginator.page(page)
     except InvalidPage:
