@@ -6,12 +6,11 @@ from practice.models import Wordlist, WordlistWord
 class Command(BaseCommand):
     help = 'help text'
 
-    def handle(self, *args, **options):
-        if len(args) != 2:
-            print('supply filename and wordlist name')
-            return
+    def add_arguments(self, parser):
+        parser.add_argument('filenames', nargs='2')
 
-        filename, wordlist_name = args
+    def handle(self, *args, **options):
+        filename, wordlist_name = options['filenames']
         with open(filename, 'r', encoding='utf-8') as f:
             wordlist = json.load(f)
 

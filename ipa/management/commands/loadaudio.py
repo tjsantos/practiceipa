@@ -13,11 +13,11 @@ class Command(BaseCommand):
     help = 'help text'
 
     def add_arguments(self, parser):
-        parser.add_argument('filename')
+        parser.add_argument('filenames', nargs='+')
 
     def handle(self, *args, **options):
         json_words = {}
-        for filename in args:
+        for filename in options['filenames']:
             with open(filename, 'r', encoding='utf-8') as f:
                 more_json_words = json.load(f)
             json_words.update(more_json_words)
