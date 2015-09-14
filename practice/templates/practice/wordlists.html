@@ -60,7 +60,7 @@
           </h4>
           <ul class="list-inline">
             {% for audio in word.audio_set.all %}
-            <li><audio controls src={{ audio.audiofile.url }}>
+            <li><audio controls preload="none" src={{ audio.audiofile.url }}>
                 Your browser does not support the <code>audio</code> element.
               </audio>{% if audio.accent == "GB" %} (GB) {% endif %}</li>
             {% endfor %}
