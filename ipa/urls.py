@@ -1,9 +1,10 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
+from . import views
 
-urlpatterns = patterns('',
-    url(r'^$', 'ipa.views.index', name='index'),
-    url(r'^(?P<lang>\w+)/', include(patterns('',
-        url(r'^(?P<search>\w+)$', 'ipa.views.detail', name='detail'),
-    ))),
-    url(r'^search$', 'ipa.views.search', name='search')
-)
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+    url(r'^(?P<lang>\w+)/', include([
+        url(r'^(?P<search>\w+)$', views.detail, name='detail'),
+    ])),
+    url(r'^search$', views.search, name='search')
+]

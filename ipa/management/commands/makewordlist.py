@@ -7,7 +7,7 @@ class Command(BaseCommand):
     help = 'help text'
 
     def add_arguments(self, parser):
-        parser.add_argument('filenames', nargs='2')
+        parser.add_argument('filenames', nargs=2)
 
     def handle(self, *args, **options):
         filename, wordlist_name = options['filenames']
